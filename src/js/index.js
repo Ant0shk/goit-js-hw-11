@@ -1,9 +1,9 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { getImgApi } from './img-api';
-import { createCard } from './createMarkup';
-import { refs } from './refs';
+import { getImgApi } from '../js/img-api';
+import { createCard } from '../js/createMarkup';
+import { refs } from '../js/refs';
 
 Notiflix.Notify.init({
   position: 'center-center',
@@ -23,11 +23,11 @@ let currentPage = 1;
 let searchQuery = '';
 
 refs.formEl.addEventListener('submit', onFormSubmit);
-refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn); //буде догружати зображення
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn); 
 refs.loadMoreBtn.disabled = true;
 refs.loadMoreBtn.style.display = 'none';
 
-//Пошук зображень
+
 async function onFormSubmit(event) {
   event.preventDefault();
   refs.loadMoreBtn.disabled = false;
@@ -64,7 +64,6 @@ async function onFormSubmit(event) {
   event.target.reset();
 }
 
-//Догрузка зображень
 async function onLoadMoreBtn(event) {
   try {
     currentPage += 1;
