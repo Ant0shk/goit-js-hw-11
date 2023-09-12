@@ -23,10 +23,9 @@ let currentPage = 1;
 let searchQuery = '';
 
 refs.formEl.addEventListener('submit', onFormSubmit);
-refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn); 
+refs.loadMoreBtn.addEventListener('click', onLoadMoreBtn);
 refs.loadMoreBtn.disabled = true;
 refs.loadMoreBtn.style.display = 'none';
-
 
 async function onFormSubmit(event) {
   event.preventDefault();
@@ -36,6 +35,7 @@ async function onFormSubmit(event) {
   if (searchQuery === '') {
     refs.loadMoreBtn.disabled = true;
     refs.loadMoreBtn.style.display = 'none';
+    refs.gallery.innerHTML = '';
     Notiflix.Notify.failure(
       'It is hard to search with such little information'
     );
@@ -49,14 +49,20 @@ async function onFormSubmit(event) {
     );
     if (total === 0) {
       refs.loadMoreBtn.style.display = 'none';
+      refs.gallery.innerHTML = '';
       throw 'Sorry, there are no images matching your search query. Please try again.';
     }
+
     refs.gallery.innerHTML = '';
     refs.loadMoreBtn.style.display = 'block';
     Notiflix.Notify.success(`Hooray! We found ${totalHits} images.`);
     const cardMarkup = createCard(hits);
     refs.gallery.insertAdjacentHTML('beforeend', cardMarkup);
     lightbox.refresh();
+
+    if (totalHits <= 40) {
+      refs.loadMoreBtn.style.display = 'none';
+    }
   } catch (error) {
     Notiflix.Notify.failure(error);
   }
@@ -71,12 +77,16 @@ async function onLoadMoreBtn(event) {
       searchQuery,
       currentPage
     );
-    console.log(totalHits);
     const totalPage = Math.ceil(totalHits / 40);
     if (currentPage > totalPage) {
       currentPage = 1;
       refs.loadMoreBtn.style.display = 'none';
       throw 'We are sorry, but you have reached the end of search results.';
+    }
+
+    if (totalHits <= currentPage * 40) {
+      refs.loadMoreBtn.style.display = 'none';
+      Notiflix.Notify.success(`We are reached the end of search results`);
     }
     const cardMarkup = createCard(hits);
     refs.gallery.insertAdjacentHTML('beforeend', cardMarkup);
